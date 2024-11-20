@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:tetris_project/data/piece.dart';
+import 'package:tetris_project/data/values.dart';
 import 'package:tetris_project/ui/widgets/pixel.dart';
 
 class GameBoard extends StatefulWidget {
@@ -9,8 +13,29 @@ class GameBoard extends StatefulWidget {
 }
 
 class _GameBoardState extends State<GameBoard> {
-  final int rowLength = 10;
-  final int columnLength = 15;
+  Piece? currentPiece = Piece(type: Tetromino.T);
+
+  @override
+  void initState() {
+    super.initState();
+
+    startGame();
+  }
+
+  void startGame() {
+    currentPiece!.initializePiece();
+
+    Duration frameRate = const Duration(milliseconds: 400);
+    gameLoop(frameRate);
+  }
+
+  void gameLoop(Duration frameRate) {
+    Timer.periodic(frameRate, (timer) {
+      setState(() {
+        currentPiece!.movePiece(Direction.down);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +47,17 @@ class _GameBoardState extends State<GameBoard> {
           itemCount: rowLength * columnLength,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return const Pixel(color: Colors.grey);
+            if (currentPiece!.position.contains(index)) {
+              return Pixel(
+                color: Colors.blueAccent,
+                child: index,
+              );
+            } else {
+              return Pixel(
+                color: Colors.grey[900]!,
+                child: index,
+              );
+            }
           }),
     );
   }
