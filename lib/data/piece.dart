@@ -46,4 +46,26 @@ class Piece {
         break;
     }
   }
+
+  void rotatePiece() {
+    if (type == Tetromino.O) return;
+
+    int pivot = position[1];
+    List<int> newPosition = [];
+
+    for (int i = 0; i < position.length; i++) {
+      int row = position[i] ~/ rowLength;
+      int col = position[i] % rowLength;
+
+      int pivotRow = pivot ~/ rowLength;
+      int pivotCol = pivot % rowLength;
+
+      int newRow = pivotRow - (col - pivotCol);
+      int newCol = pivotCol + (row - pivotRow);
+
+      int newPositionValue = newRow * rowLength + newCol;
+      newPosition.add(newPositionValue);
+    }
+    position = newPosition;
+  }
 }
